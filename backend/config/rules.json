@@ -1,0 +1,34 @@
+{
+  "rules": [
+    {
+      "name": "Noindex Tag",
+      "type": "fail_if_found",
+      "pattern": "noindex"
+    },
+    {
+      "name": "Template Email",
+      "type": "fail_if_found",
+      "pattern": "tobibelaw@gmail.com"
+    },
+    {
+      "name": "Google Analytics",
+      "type": "warn_if_missing",
+      "pattern": "gtag("
+    },
+    {
+      "name": "Google Tag Manager",
+      "type": "warn_if_missing",
+      "pattern": "googletagmanager"
+    },
+    {
+      "name": "EmailJS Connection",
+      "type": "warn_if_missing",
+      "pattern": "emailjs.init"
+    }
+  ],
+  "crawler_settings": {
+    "max_pages": 10,
+    "max_js_files": 10,
+    "timeout": 10
+  }
+}

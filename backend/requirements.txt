@@ -1,0 +1,7 @@
+aiohttp
+beautifulsoup4
+colorama
+fastapi
+uvicorn
+pydantic
+pydantic-settings
