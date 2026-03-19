@@ -14,7 +14,11 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from app.config_loader import ConfigLoader
 from app.scanner import Scanner
 
-app = FastAPI(title="Site Launch QA API")
+# Create the app with a root path for Vercel
+app = FastAPI(
+    title="Site Launch QA API",
+    root_path="/api" if os.environ.get("VERCEL") else ""
+)
 
 # Enable CORS
 app.add_middleware(
