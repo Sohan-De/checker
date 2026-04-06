@@ -13,17 +13,17 @@
     {
       "name": "Google Analytics",
       "type": "warn_if_missing",
-      "pattern": "gtag("
+      "pattern": ["gtag(", "ga(", "analytics.js", "analytics-v4"]
     },
     {
       "name": "Google Tag Manager",
       "type": "warn_if_missing",
-      "pattern": "googletagmanager"
+      "pattern": ["googletagmanager", "gtm.js"]
     },
     {
       "name": "EmailJS Connection",
       "type": "warn_if_missing",
-      "pattern": "emailjs.init"
+      "pattern": ["emailjs.init", "emailjs.send", "emailjs.sendForm", "emailjs-com", "@emailjs/browser"]
     }
   ],
   "crawler_settings": {

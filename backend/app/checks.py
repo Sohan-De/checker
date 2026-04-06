@@ -14,21 +14,26 @@ class RulesEvaluator:
         rule_type = rule['type']
         pattern = rule['pattern']
         
-        found = pattern.lower() in content.lower()
+        if isinstance(pattern, list):
+            found = any(p.lower() in content.lower() for p in pattern)
+            pattern_str = " | ".join(pattern)
+        else:
+            found = pattern.lower() in content.lower()
+            pattern_str = pattern
         
         if rule_type == 'fail_if_found':
             if found:
-                return "FAIL", f"{name} found pattern '{pattern}'"
+                return "FAIL", f"{name} found pattern '{pattern_str}'"
             return "PASS", "-"
         
         if rule_type == 'fail_if_missing':
             if not found:
-                return "FAIL", f"{name} missing pattern '{pattern}'"
+                return "FAIL", f"{name} missing pattern '{pattern_str}'"
             return "PASS", "-"
             
         if rule_type == 'warn_if_missing':
             if not found:
-                return "WARNING", f"{name} missing pattern '{pattern}'"
+                return "WARNING", f"{name} missing pattern '{pattern_str}'"
             return "PASS", "-"
             
         return "UNKNOWN", f"Invalid rule type: {rule_type}"

@@ -25,19 +25,34 @@ class Crawler:
         except Exception as e:
             return f"ERROR: {str(e)}"
 
+    def _is_internal(self, url: str, base_domain: str) -> bool:
+        """Check if a URL belongs to the same base domain."""
+        parsed = urlparse(url)
+        netloc = parsed.netloc.lower()
+        if not netloc:
+            return True # Relative URL
+        
+        # Simple base domain check: allow subdomains
+        # e.g. if base is example.com, allow www.example.com, api.example.com
+        return netloc == base_domain or netloc.endswith("." + base_domain)
+
     def extract_internal_links(self, html: str, base_url: str) -> list:
         """Extract all internal links from HTML."""
         soup = BeautifulSoup(html, 'html.parser')
-        domain = urlparse(base_url).netloc
+        parsed_base = urlparse(base_url)
+        base_domain = parsed_base.netloc.lower()
+        # Strip www. for base domain comparison
+        if base_domain.startswith("www."):
+            base_domain = base_domain[4:]
+            
         links = set()
         
         for a_tag in soup.find_all('a', href=True):
             href = a_tag['href']
             full_url = urljoin(base_url, href)
-            parsed_href = urlparse(full_url)
             
-            # Ensure it's the same domain and not a fragment/parameter duplicate
-            if parsed_href.netloc == domain:
+            if self._is_internal(full_url, base_domain):
+                parsed_href = urlparse(full_url)
                 clean_url = f"{parsed_href.scheme}://{parsed_href.netloc}{parsed_href.path}"
                 if clean_url:
                     links.add(clean_url.rstrip('/'))
@@ -47,13 +62,18 @@ class Crawler:
     def extract_js_links(self, html: str, base_url: str) -> list:
         """Extract internal JavaScript file links."""
         soup = BeautifulSoup(html, 'html.parser')
-        domain = urlparse(base_url).netloc
+        parsed_base = urlparse(base_url)
+        base_domain = parsed_base.netloc.lower()
+        if base_domain.startswith("www."):
+            base_domain = base_domain[4:]
+            
         js_links = set()
         
         for script in soup.find_all('script', src=True):
             src = script['src']
             full_url = urljoin(base_url, src)
-            if urlparse(full_url).netloc == domain:
+            
+            if self._is_internal(full_url, base_domain):
                 js_links.add(full_url)
                 
         return list(js_links)
